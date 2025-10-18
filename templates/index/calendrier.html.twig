@@ -1,0 +1,199 @@
+{% extends 'baseDentiste.html.twig' %}
+
+{% block title %}Prochains rendez-vous{% endblock %}
+
+{% block body %}
+<script>
+    function activarAccion(tipo) {
+        if (tipo == 1) {
+            document.getElementById("accion").style.display = "none";
+            document.getElementById("actions").style.display = "block";
+        } else {
+            document.getElementById("accion").style.display = "block";
+            document.getElementById("actions").style.display = "none";
+        }
+    }
+    function cacherEdition(id, tipo) {
+        var visibles = ['date', 'heure', 'minute', 'boton1', 'boton2'];
+        var visible = tipo ? 'block' : 'none';
+        var oculto = tipo ? 'none' : 'block';
+        visibles.forEach(function (element) {
+            document.getElementById(element + '_visible' + id).style.display = visible;
+            document.getElementById(element + '_oculto' + id).style.display = oculto;
+        });
+
+    }
+    function verificarHM(numero) {
+        var num = numero.value;
+        if (num.length === 1) {
+            numero.value = '0' + num;
+        } else if (num.length > 2) {
+            numero.value = num.slice(0, 2);
+        }
+    }
+    function verificar_consulta_dentista(id) {
+        var fecha = document.getElementById('date_oculto' + id).value;
+        var heure = document.getElementById('heure_oculto' + id).value;
+        var minute = document.getElementById('minute_oculto' + id).value;
+        var parametro = fecha + " " + heure + ":" + minute + ":00";
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', "{{ path('app_verificar_consulta_dentista') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.mensaje == '0') {
+                        document.getElementById("tr" + id).style.backgroundColor = 'white';
+                        document.getElementById("date_visible" + id).innerHTML = fecha;
+                        document.getElementById("heure_visible" + id).innerHTML = heure;
+                        document.getElementById("minute_visible" + id).innerHTML = minute;
+                        cacherEdition(id, true);
+                    }
+                    else document.getElementById("tr" + id).style.backgroundColor = 'pink';
+
+                } else {
+                    document.getElementById('resultado').innerHTML = '<p>Erreur!!!</p>';
+                }
+            }
+        };
+        var params = 'fecha=' + encodeURIComponent(parametro) + '&id=' + encodeURIComponent(id);
+        xhr.send(params);
+
+        return false;
+    }
+    function ordenance(id,patient, service){
+        document.getElementById('rep').innerHTML = 'Patient: ' +patient+', service '+service;
+
+        document.getElementById('rendezvous_id').value=id;
+        var ordenance = document.getElementById('ordenance').value
+        xhr.open('POST', "{{ path('prochains_rendez_vous') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                } else {
+                    document.getElementById('resultado').innerHTML = '<p>Erreur!!!</p>';
+                }
+            }
+        };
+        var params = 'rendezvous_id' + encodeURIComponent(id) + '&ordenance=' + encodeURIComponent(ordenance);
+        xhr.send(params);
+    }
+
+
+</script>
+
+<div class="container-fluid py-5 wow fadeInUp mb-10" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-5 mb-4">
+                <div class="section-title">
+                    <h5 class="position-relative d-inline-block text-primary text-uppercase">Mes prochains rendez-vous
+                    </h5>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <b>
+                <thead>
+                    <tr>
+                        <td>Service</td>
+                        <td id="resultado">Patient</td>
+                        <td>Date</td>
+                        <td colspan="3" align="center">Heure</td>
+                        <td colspan="2" align="center">Actions</td>
+                    </tr>
+                </thead>
+            </b>
+            <tbody>
+                {% for rendezvous in rendezvouses %}
+                {% if rendezvous.actif %}
+                {% set codigo = (101 - 1) * rendezvous.patient.id * (103 - 1) %}
+                <form onsubmit="return verificar_consulta_dentista('{{rendezvous.id}}')"
+                    id="form_rendezvous{{rendezvous.id}}" method="post" enctype="multipart/form-data">
+                    <tr id="tr{{rendezvous.id}}">
+                        <td style="width: 20%;">{{rendezvous.service}}</td>
+                        <td style="width: 30%;"><a href="{{path('app_patient',{'codigo': codigo})}}">{{
+                                rendezvous.patient }}</a></td>
+                        <td style="width: 15%;">
+                            <rafa id="date_visible{{rendezvous.id}}">
+                                {{ rendezvous.date ? rendezvous.date|date('d-m-Y') }}
+                            </rafa>
+                            <input id="date_oculto{{rendezvous.id}}" style="display: none;" name="date"
+                                class="form-control bg-light border-0 w-75" type="date"
+                                value="{{ rendezvous.date ? rendezvous.date|date('Y-m-d') }}">
+                        </td>
+                        <td style="width: 7%;" align="right">
+                            <rafa id="heure_visible{{rendezvous.id}}">
+                                {{ rendezvous.date ? rendezvous.date|date('H') }}
+                            </rafa>
+                            <input id="heure_oculto{{rendezvous.id}}" style="display: none;"
+                                class="form-control bg-light border-0  w-100" oninput="verificarHM(this)" name="heure"
+                                type="number" pattern="\d{2}" maxlength="2"
+                                value="{{ rendezvous.date ? rendezvous.date|date('H') }}" step="1" scale="0" min="09"
+                                max="19">
+                        </td>
+                        <td style="width: 1%;">
+                            :
+                        </td>
+                        <td style="width: 7%;">
+                            <rafa id="minute_visible{{rendezvous.id}}">
+                                {{ rendezvous.date ? rendezvous.date|date('i') }}
+                            </rafa>
+                            <input id="minute_oculto{{rendezvous.id}}" style="display: none;"
+                                class="form-control bg-light border-0  w-100" oninput="verificarHM(this)" name="minute"
+                                type="number" pattern="\d{2}" maxlength="2"
+                                value="{{ rendezvous.date ? rendezvous.date|date('i') }}" step="15" scale="0" min="0"
+                                max="59">
+                        </td>
+                        <td style="width: 10%;">
+                            <button type="button" id="boton1_visible{{rendezvous.id}}" class="btn btn-primary w-100"
+                                onclick="cacherEdition('{{ rendezvous.id }}',false);">Reporter</button>
+                            <button type="submit" id="boton1_oculto{{rendezvous.id}}" class="btn btn-primary w-100 "
+                                style="display: none;">{{ button_label|default('Valider') }}</button>
+                        </td>
+                        <td style="width: 10%;">
+                            <a type="button" id="boton2_visible{{rendezvous.id}}" class="btn btn-dark  w-100 "
+                               href="{{path('prochains_rendez_vous')}}#ordenances" onclick="ordenance('{{rendezvous.id}}', '{{ rendezvous.patient}}', '{{rendezvous.service}}')">Complété</a>
+                            <button type="button" id="boton2_oculto{{rendezvous.id}}" class="btn btn-danger  w-100"
+                                onclick="cacherEdition('{{ rendezvous.id }}',true);"
+                                style="display: none;">Canceler</button>
+                        </td>
+                    </tr>
+                </form>
+
+                {% endif %}
+                {% else %}
+                <tr>
+                    <td colspan="11">Aucun enregistrement trouvé</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container-fluid banner mb-5 " >
+    <div class="container" id="ordenances" style= " padding-bottom: 200px;">
+    </div>            
+    <div class="container" style= " margin-bottom: 5px;">
+        <form method="post" onsubmit="return ">
+            <div class="row gx-0 justify-content-center">
+                <div class="bg-dark d-flex flex-column p-5" style="height: auto; width:900px;">
+                    <h4 class="text-white mb-2" id = 'rep'>Ordenance:</h4>
+                    <div class="mb-3">
+                        <textarea class="form-control border-0 bg-light px-4 py-3" name="ordenance" id="ordenance" rows="5"></textarea>
+                    </div>
+                    <!--<input type="hidden" name="rendezvous_id" id="rendezvous_id" value="">-->
+                    <center><a type="submit" class="btn btn-primary w-25" id="btn_ordenance">Ajouter</a></center>
+                </div>
+            </div>  
+        </form>
+    </div>
+</div>  
+{% endblock %}

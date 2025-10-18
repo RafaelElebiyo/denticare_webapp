@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}A Propos{% endblock %}
+
+{% block body %}
+ <!-- Hero Start -->
+ <div class="container-fluid bg-primary py-5 hero-header mb-5">
+    <div class="row py-3">
+        <div class="col-12 text-center">
+            <h1 class="display-3 text-white animated zoomIn">À propos de nous</h1>
+            <a href="{{path('app_index')}}" class="h4 text-white">Accueil</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="{{path('app_apropos')}}" class="h4 text-white">À propos</a>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+
+<!-- A propos Start -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="section-title mb-4">
+                    <h5 class="position-relative d-inline-block text-primary text-uppercase">À propos de nous</h5>
+                    <h1 class="display-5 mb-0">La qualité et la confiance du secteur dentaire</h1>
+                </div>
+                <h4 class="text-body fst-italic mb-4">Bienvenue à Denticare, où votre santé buccodentaire et un beau sourire sont notre priorité absolue.</h4>
+                <p class="mb-4">Nous disposons d’une équipe de dentistes hautement qualifiés, possédant des années d’expérience et une spécialisation dans divers domaines de la dentisterie. Notre engagement est de vous fournir un service de qualité, en veillant à ce que vous vous sentiez à l'aise et en sécurité lors de chaque visite.</p>
+                <p class="mb-4">Nous savons qu'une visite chez le dentiste peut être stressante, c'est pourquoi nous avons créé un environnement accueillant et relaxant. Nos installations sont conçues pour que vous vous sentiez à l'aise et calme, avec des espaces modernes et un personnel toujours prêt à vous aider.</p>
+                <div class="row g-3">
+                    <div class="col-sm-6 wow zoomIn" data-wow-delay="0.3s">
+                        <h5 class="mb-3"><i class="fa fa-check-circle text-primary me-3"></i>Personnel professionnel</h5>
+                    </div>
+                    <div class="col-sm-6 wow zoomIn" data-wow-delay="0.6s">
+                        <h5 class="mb-3"><i class="fa fa-check-circle text-primary me-3"></i>Des prix équitables</h5>
+                    </div>
+                </div>
+                <a href="{{path('nouveau_rendezvous')}}" class="btn btn-primary py-3 px-5 mt-4 wow zoomIn" data-wow-delay="0.6s">Prendre un rendez-vous</a>
+            </div>
+            <div class="col-lg-5" style="min-height: 500px;">
+                <div class="position-relative h-100">
+                    <img class="position-absolute w-100 h-100 rounded wow zoomIn" data-wow-delay="0.9s" src="{{asset('assets/img/about.jpg')}}" style="object-fit: cover;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- A propos End -->
+
+{% endblock %}

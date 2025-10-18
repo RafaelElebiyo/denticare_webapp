@@ -1,0 +1,76 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Liste Rendez-vous{% endblock %}
+
+{% block body %}
+<script>
+    function activar(id) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "{{ path('app_activer') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    document.getElementById("tr"+response.id).style.display="none";
+
+                } else {
+                    var errorText = "Error " + xhr.status + ": " + xhr.statusText;
+                    document.getElementById('resultado').innerHTML = '<p>' + errorText + '</p>';
+                }
+            }
+        };
+        var params = 'id=' + encodeURIComponent(id) + '&tipo=' + encodeURIComponent('rendezvous');
+        xhr.send(params);
+    }
+</script>
+
+<div class="container d-flex justify-content-center">
+    <div class="col-12">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Service</th>
+                <th>Dentiste</th>
+                <th>Clinique</th>
+                <th>Date</th>
+                <th>Etat</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rendezvous in rendezvouses %}
+           
+            <tr id="tr{{ rendezvous.id }}" style="background-color: {{ rendezvous.actif ? 'palegreen' : 'pink'}}">
+                <td>{{ rendezvous.patient }} </td>
+                <td>{{ rendezvous.service }}</td>
+                <td>{{ rendezvous.dentiste }} </td>
+                <td>Denticare {{ rendezvous.dentiste.ville }} </td>
+                <td>
+                    {% set hoy = "now"|date('d-m-Y') %}
+                    {% set rendezvous_date = rendezvous.date ? rendezvous.date|date('d-m-Y') %}
+                    {% if rendezvous_date == hoy %}
+                        aujourd'hui
+                    {% else %}
+                        {{ rendezvous_date }}
+                    {% endif %}
+                    {{rendezvous.date ? rendezvous.date|date('H : i')}} 
+                </td>
+                
+                <td class="p-0" width="100">
+                    <a onclick="activar('{{rendezvous.id}}')" class="btn btn-{{ rendezvous.actif ? 'danger' : ''}} w-100 h-100 d-flex justify-content-center align-items-center">
+                        {{ rendezvous.actif ? 'Desactiver' : '' }}
+                    </a>
+                </td>               
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">Aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

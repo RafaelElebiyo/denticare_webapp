@@ -1,0 +1,88 @@
+{% extends 'baseDentiste.html.twig' %}
+
+{% block title %}Information du patient{% endblock %}
+
+{% block body %}
+<!--Datos del usuario -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row g-5 mb-5">
+            <div class="col-lg-7">
+                <div class="position-relative text-center bg-light border-bottom border-primary py-5 p-4" >
+                    <div id="userdata">
+                        <h4>{{utilisateur.genre ? 'M.':'Mme.'}} {{utilisateur.nom}}</h4>
+                        <hr class="text-primary w-50 mx-auto mt-0">
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.ville }}</div>
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.age }} ans</div>
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.email }}</div>
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.telephone }}</div>
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.adresse }}</div>
+                    </div>                                   
+                </div>
+            </div>                        
+            <div class="col-lg-5 wow zoomIn d-flex flex-column justify-content-center align-items-center" data-wow-delay="0.3s" style="min-height: 400px;">
+                <img id="mifoto" class="img-fluid rounded-circle mb-1" src="{{ asset(utilisateur.foto) }}" alt="" style="width: 350px; height: 350px; object-fit: cover;">
+            </div> 
+        </div>
+    </div>
+</div> 
+<!-- Datos de usuario fin-->
+
+<!--Citas-->
+<div class="container-fluid py-5 wow fadeInUp mb-5" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-5 mb-4">
+                <div class="section-title">
+                    <h5 class="position-relative d-inline-block text-primary text-uppercase">Mes prochains rendez-vous</h5>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <b>
+                <thead>
+                    <tr>
+                        <td>Service</td>
+                        <td  id="resultado">Dentiste</td> 
+                        <th>Clinique</th>            
+                        <td >Date</td>
+                        <td  align="center">Heure</td>
+                        <td  align="center">Ordonnance</td>
+                    </tr>
+                </thead>
+            </b> 
+            <tbody>
+                {% for rendezvous in rendezvouses %}
+                    {% if not rendezvous.actif  %}
+                        {% set codigo = (101 - 1) * rendezvous.dentiste.id * (103 - 1) %}
+                            <tr id="tr{{rendezvous.id}}">
+                                <td style="width: 15%;">{{rendezvous.service}}</td>    
+                                <td style="width: 15%;">{{ rendezvous.dentiste }}</td>    
+                                <td style="width: 18%;">Denticare {{rendezvous.dentiste.ville}}</td>
+                                <td style="width: 10%;">
+                                    <rafa id="date_visible{{rendezvous.id}}">
+                                        {{ rendezvous.date ? rendezvous.date|date('d-m-Y') }}
+                                    </rafa>
+                                </td>
+                                <td style="width: 7%;" align="left">
+                                    <rafa id="heure_visible{{rendezvous.id}}">
+                                        {{ rendezvous.date ? rendezvous.date|date('H:i') }}
+                                    </rafa>
+                                </td> 
+                                <td style="width: 35%;">
+                                    {{rendezvous.observation}}
+                                </td>
+                            </tr>                
+                    {% endif %}
+                    {% else %}
+                        <tr>
+                            <td colspan="11">Aucun enregistrement trouvé</td>
+                        </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div> 
+</div>   
+<!--Citas End-->
+
+{% endblock %}

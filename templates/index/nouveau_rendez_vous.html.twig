@@ -1,0 +1,190 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rendez-vous{% endblock %}
+
+{% block body %}
+<script>
+    function chercher_dentistes(select) {
+        var dentistes = document.getElementById('rendezvous_dentiste');
+        var xhr = new XMLHttpRequest();
+        var ciudad = select.value;
+        while (dentistes.options.length > 1) {
+            dentistes.remove(1); // Remove el índice 1 (el primer elemento después de "Dentiste")
+        }
+
+        xhr.open('POST', "{{ path('app_cargar_dentistas') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var dentistes = document.getElementById('rendezvous_dentiste');
+                    response.forEach(function(user) {
+                        var option = document.createElement('option');
+                        option.value = user.id;  // Valor de la opción es el id
+                        option.text = user.nom; // Texto visible de la opción
+                        dentistes.appendChild(option); 
+                    });
+                } else {
+                    document.getElementById('resultado').innerHTML = '<p>Erreur!!!</p>';
+                }
+            }
+        };
+        var params = 'ciudad=' + encodeURIComponent(ciudad);
+        xhr.send(params);
+
+        // Prevenir el envío del formulario hasta que se reciba la respuesta
+        return false;
+    }
+    
+    function proponer_hora_valida() {
+        var dentista = document.getElementById('rendezvous_dentiste').value;
+        var fecha = document.getElementById('rendezvous_date').value;
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', "{{ path('app_proponer_hora') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var heure = document.getElementById('heure');
+                    heure.value = response.hora == '0' ? heure.value : response.hora;
+                    var minute = document.getElementById('minute');
+                    minute.value = response.hora == '0' ? minute.value : response.minuto;
+                   
+                } else {
+                    document.getElementById('resultado').innerHTML = '<p>Erreur!!!</p>';
+                }
+            }
+        };
+        var params = 'fecha=' + encodeURIComponent(fecha) + '&dentista=' + encodeURIComponent(dentista);
+        xhr.send(params);
+
+        return false;
+    }
+    
+    
+
+
+    function verificar_consulta() {
+        var dentista = document.getElementById('rendezvous_dentiste').value;
+        var fecha = document.getElementById('rendezvous_date').value;
+        var heure = document.getElementById('heure').value;
+        var minute = document.getElementById('minute').value;
+        var parametro = fecha + " " + heure + ":" + minute + ":00";
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', "{{ path('app_verificar_consulta') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var color = new Map([['0', 'green'],['1', 'red'],['2', 'yellow']]);
+                    var opcion = new Map([  ['0', 'Traitement en cours'],
+                                            ['1', 'Rendez-vous deja existant!'],
+                                            ['2', 'Ce jour vous avez deja un rendez-vous']]);
+                    document.getElementById('resultado').innerHTML = '<font color="' + 
+                    color.get(response.mensaje) +'">' + opcion.get(response.mensaje) + '</font>';
+                    if(response.mensaje == '0') {
+                        document.getElementById('formrendezvous').submit();
+                    }
+                } else {
+                    document.getElementById('resultado').innerHTML = '<p>Erreur!!!</p>';
+                }
+            }
+        };
+        var params = 'fecha=' + encodeURIComponent(parametro) + '&dentista=' + encodeURIComponent(dentista);
+        xhr.send(params);
+
+        // Prevenir el envío del formulario hasta que se reciba la respuesta
+        return false;
+    }
+
+    function verificarHM(numero){
+        var num=numero.value;
+        if (num.length === 1) {
+            numero.value = '0' + num;
+        } else if (num.length > 2) {
+            numero.value = num.slice(0, 2);
+        }
+    }
+</script>
+<!-- Hero Start -->
+<div class="container-fluid bg-primary py-5 hero-header mb-5">
+    <div class="row py-3">
+        <div class="col-12 text-center">
+            <h1 class="display-3 text-white animated zoomIn">Rendez-vous</h1>
+            <a href="{{ path('app_index') }}" class="h4 text-white">Accueil</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="{{ path('app_nouveau_rendezvous') }}" class="h4 text-white">Rendez-vous</a>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+
+<!-- Appointment Start -->
+<div class="container-fluid bg-primary bg-appointment my-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row gx-5">
+            <div class="col-lg-6 py-5">
+                <div class="py-5">
+                    <h1 class="display-5 text-white mb-4">Nous sommes une clinique dentaire certifiée dans laquelle vous pouvez avoir confiance</h1>
+                    <p class="text-white mb-0">Retrouvez votre sourire éclatant dans notre clinique dentaire de confiance ! Planifiez votre rendez-vous aujourd'hui et bénéficiez des soins dentaires de qualité que vous méritez. Votre santé dentaire est notre priorité, nous espérons vous voir bientôt !</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="appointment-form h-100 d-flex flex-column justify-content-center text-center p-5 wow zoomIn" data-wow-delay="0.6s">
+                    <h1 id="resultado" class="text-white mb-4">Prendre un rendez-vous</h1>
+                    <form id="formrendezvous" action="{{path('app_nouveau_rendezvous')}}" method="post" enctype="multipart/form-data" onsubmit="return verificar_consulta();">
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6">
+                                {{form_widget(form.date, {'attr' : { 'value' : "now"|date("Y-m-d")}})}}    
+                            </div>
+                            <div class="col-12 col-sm-3">
+                                <input oninput="verificarHM(this)" id="heure" name="heure" type="number" class="form-control bg-light border-0" pattern="\d{2}" maxlength="2" value="09" step="1" scale="0" min="09" max="19">
+                            </div>
+                            <div class="col-12 col-sm-3">
+                                <input oninput="verificarHM(this)" id="minute" name="minute" type="number" class="form-control bg-light border-0" pattern="\d{2}" maxlength="2" value="00" step="15" scale="0" min="0" max="59">
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                {{form_widget(form.service)}}
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <select required class="form-select bg-light border-0"  onchange="chercher_dentistes(this);">
+                                    <option value="" selected disabled>Ville</option>
+                                    <option value="al_hoceima">Al Hoceïma</option>
+                                    <option value="casablanca">Casablanca</option>
+                                    <option value="fes">Fès</option>
+                                    <option value="kenitra">Kénitra</option>
+                                    <option value="marrakech">Marrakech</option>
+                                    <option value="meknes">Meknès</option>
+                                    <option value="rabat">Rabat</option>
+                                    <option value="sale">Salé</option>
+                                    <option value="tanger">Tanger</option>
+                                    <option value="tetouan">Tétouan</option>
+                                </select>
+                            </div> 
+                            <div class="col-12 col-sm-4">
+                                <select onchange="proponer_hora_valida();" required class="form-select bg-light border-0"  id="rendezvous_dentiste" name="dentiste">
+                                    <option  value="" selected disabled>Dentiste</option>
+                                </select>
+                            </div>
+                            <div style="display:none;">
+                                {{ form_row(form) }}
+                            </div>  
+                            <button type="submit" id="validar" class="btn btn-dark w-100 py-3">{{ button_label|default('Prendre un rendez-vous') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Appointment End -->
+{% endblock %}

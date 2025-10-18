@@ -1,0 +1,59 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Liste Temoinages{% endblock %}
+
+{% block body %}
+<script>
+    function activar(id) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "{{ path('app_activer') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    document.getElementById("tr"+response.id).style.display="none";
+
+                } else {
+                    var errorText = "Error " + xhr.status + ": " + xhr.statusText;
+                    document.getElementById('resultado').innerHTML = '<p>' + errorText + '</p>';
+                }
+            }
+        };
+        var params = 'id=' + encodeURIComponent(id) + '&tipo=' + encodeURIComponent('temoinage');
+        xhr.send(params);
+    }
+</script>
+
+<div class="container d-flex justify-content-center">
+    <div class="col-12">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Temoinage</th>
+                <th>État</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for temoinage in temoinages %}
+            <tr id="tr{{temoinage.id}}" style="background-color: {{ temoinage.actif ? 'palegreen' : 'pink'}}">
+                <td title="{{ temoinage.patient }} le {{ temoinage.date ? temoinage.date|date('d-m-Y')}}">{{ temoinage.message }}</td>
+                {% if (temoinage.actif ) %}
+                <td class="p-0" width="100">
+                    <a  onclick="activar('{{temoinage.id}}')" class="btn btn-{{ temoinage.actif ? 'danger' : ''}} w-100 h-100 d-flex justify-content-center align-items-center">
+                        {{ temoinage.actif ? 'Desactiver' : '' }}
+                    </a>
+                </td>
+                {% endif %}                
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">Aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

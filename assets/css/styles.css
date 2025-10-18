@@ -1,0 +1,58 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+#calendar {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.day {
+    flex: 1 0 14%;
+    border: 1px solid #ddd;
+    margin: 2px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.day-header {
+    font-weight: bold;
+    text-align: center;
+}
+
+.user-icon {
+    width: 2em; 
+    height: 2em; 
+    object-fit: contain; 
+}
+
+
+.hour {
+    border: 1px solid #ddd;
+    margin: 2px;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.hour.booked {
+    background-color: #1e3d7b;
+    color: white;
+}

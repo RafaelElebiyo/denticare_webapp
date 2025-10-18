@@ -1,0 +1,237 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+<script>
+    function cambiar_path() {
+        var selectedOption = document.getElementById('ville-select').value;
+        document.getElementById('button_recherche').href = "{{ path('app_clinique', {'ref': 'REPLACE_WITH_SELECTED_OPTION' }) }}#dentistes".replace('REPLACE_WITH_SELECTED_OPTION', selectedOption);
+    }
+</script>
+<!-- Carousel Start -->
+<div class="container-fluid p-0 mb-10">
+    <div id="header-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img class="w-100" src="{{asset('assets/img/BGdent4.jpg')}}" alt="Image">
+                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                    <div class="p-3" style="max-width: 900px;">
+                        <h5 class="text-white text-uppercase mb-3 animated slideInDown">Gardez votre sourire éclatant et
+                            en bonne santé</h5>
+                        <h1 class="display-1 text-white mb-md-4 animated zoomIn">Recevez les meilleurs soins dentaires
+                            de qualité</h1>
+                        {% if app.user %}
+                        {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-primary py-2 px-4 ms-3">S'authentifier</a>
+                        <a href="{{ path('app_register') }}" class="btn btn-secondary py-2 px-4 ms-3">S'inscrire</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="w-100" src="{{asset('assets/img/BGdent4.jpg')}}" alt="Image">
+                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                    <div class="p-3" style="max-width: 900px;">
+                        <h5 class="text-white text-uppercase mb-3 animated slideInDown">Gardez votre sourire éclatant et
+                            en bonne santé</h5>
+                        <h1 class="display-1 text-white mb-md-4 animated zoomIn">Laissez vos soins dentaires entre de
+                            bonnes mains</h1>
+                        {% if app.user %}
+                        {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-primary py-2 px-4 ms-3">S'authentifier</a>
+                        <a href="{{ path('app_register') }}" class="btn btn-secondary py-2 px-4 ms-3">S'inscrire</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#header-carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Précédent</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#header-carousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Suivant</span>
+        </button>
+    </div>
+</div>
+<!-- Carousel End -->
+
+
+<!-- Banner Start -->
+<div class="container-fluid banner mb-5">
+    <div class="container">
+        <div class="row gx-0">
+            <!-- Horaires d'ouvertures -->
+            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.1s">
+                <div class="bg-primary d-flex flex-column p-5" style="height: 300px;">
+                    <h3 class="text-white mb-3">Horaires d'ouvertures</h3>
+                    <div class="d-flex justify-content-between text-white mb-3">
+                        <h6 class="text-white mb-0">Lun - Sam</h6>
+                        <p class="mb-0">9h00 - 22h00</p>
+                    </div>
+                    <div class="d-flex justify-content-between text-white mb-3">
+                        <h6 class="text-white mb-0">Dimanche</h6>
+                        <p class="mb-0">Fermé</p>
+                    </div>
+                    <a class="btn btn-light" href="{{ path('nouveau_rendezvous') }}">Rendez-vous</a>
+                </div>
+            </div>
+
+<!-- Rechercher un médecin -->
+<div class="col-lg-4 wow zoomIn" data-wow-delay="0.3s">
+    <div class="bg-dark d-flex flex-column p-5" style="height: 300px;">
+        <h3 class="text-white mb-3">Rechercher un médecin</h3>
+        <select id="ville-select" class="form-select bg-light border-0 mb-3" onchange="cambiar_path()">
+            <option value="" selected disabled>Ville</option>
+            <option value="al_hoceima">Al Hoceïma</option>
+            <option value="casablanca">Casablanca</option>
+            <option value="fes">Fès</option>
+            <option value="kenitra">Kénitra</option>
+            <option value="marrakech">Marrakech</option>
+            <option value="meknes">Meknès</option>
+            <option value="rabat">Rabat</option>
+            <option value="sale">Salé</option>
+            <option value="tanger">Tanger</option>
+            <option value="tetouan">Tétouan</option>
+        </select>
+        <a class="btn btn-light" id="button_recherche" href="">Rechercher un médecin</a>
+    </div>
+</div>
+            <!-- Prendre un rendez-vous -->
+            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.6s">
+                <div class="bg-secondary d-flex flex-column p-5" style="height: 300px;">
+                    <h3 class="text-white mb-3">Prendre un rendez-vous</h3>
+                    <p class="text-white">Vous avez la possibilité de prendre rendez-vous en appelant.</p>
+                    <h2 class="text-white mb-0">069175234</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Banner End -->
+
+<!-- Team Start -->
+<div class="container-fluid py-0">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-3 wow slideInUp" data-wow-delay="0.1s">
+                <div class="section-title bg-light rounded h-100 p-5">
+                    <h5 class="position-relative d-inline-block text-primary text-uppercase">Nos Dentistes</h5>
+                    <h3 class="display-6 mb-4">Rencontrez nos dentistes certifiés et expérimentés</h3>
+                    <a href="{{path('nouveau_rendezvous')}}" class="btn btn-primary py-3 px-5">Rendez-vous</a>
+                </div>
+            </div>
+            {% set t = [3, 6,9,1] %}
+            {% set c = 0 %}
+
+            {% for dentiste in dentistes %}
+            {% if dentiste.actif %}
+            {% set age = date().diff(dentiste.ddn).y %}
+            <div class="col-lg-3 wow slideInUp" data-wow-delay="0.{{ t[c%4] }}s">
+                <div class="team-item">
+                    <div class="position-relative rounded-top" style="z-index: 1;">
+                        {% set codigo = (101 - 1) * dentiste.id * (103 - 1) %}
+                        <a href="{{ path('app_docteur',{'codigo': codigo}) }}"><img class="img-fluid rounded-top w-100"
+                                src="{{ asset( dentiste.foto ) }}" alt=""></a>
+                        <div class="position-absolute top-100 start-50 translate-middle bg-light rounded p-2 d-flex">
+                            <a class="btn btn-ligth btn-square m-1" title="{{ dentiste.email }}"
+                                href="mailto:{{ dentiste.email }}"><i
+                                    class="fa fa-envelope-open text-primary fw-normal"></i></a>
+                            <a class="btn btn-ligth btn-square m-1" title="{{ dentiste.telephone }}"
+                                href="tel:{{ dentiste.telephone }}"><i
+                                    class="bi bi-telephone text-primary me-2"></i></a>
+                            <a class="btn btn-ligth btn-square m-1" title="{{ dentiste.adresse }}"
+                                href="geo:{{ dentiste.adresse }}"><i class="bi bi-geo-alt text-primary me-2"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-text position-relative bg-light text-center rounded-bottom p-4 pt-5">
+
+                        <a href="{{ path('app_docteur', {'codigo': codigo}) }}">
+                            <h4 class="mb-2">Dr. {{ dentiste.nom }}</h4>
+                        </a>
+                        <p class="text-primary mb-0">Denticare {{ dentiste.ville }}</p>
+                    </div>
+                </div>
+            </div>
+            {% set c = c + 1 %}
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Team End -->
+
+<!--Paginacion-->
+<div class="container-fluid wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row g-5 mb-5">
+            <div class="col-lg-12">
+                <div class="position-relative text-center bg-light border-bottom border-primary py-1">
+                    <div class="btn py-2 position-absolute top-100 start-50 translate-middle">
+                        <a href="{{ path('app_index') }}?doc_page=1#d" type="button"
+                            class="btn btn-primary mx-1 py-1 px-1"><<</a>
+                                <a href="{{ path('app_index') }}?doc_page={{ page.prev }}#d" type="button"
+                                    class="btn btn-primary mx-1 py-1 px-1">&nbsp;<&nbsp;</a>
+                                        {% if page.before2 is not null %} <a
+                                            href="{{ path('app_index') }}?doc_page={{ page.before2 }}#d" type="button"
+                                            class="btn btn-primary mx-1 py-1 px-1">&nbsp;{{page.before2}}&nbsp;</a>{%
+                                        endif %}
+                                        {% if page.before1 is not null %}<a
+                                            href="{{ path('app_index') }}?doc_page={{ page.before1 }}#d" type="button"
+                                            class="btn btn-primary mx-1 py-1 px-1">&nbsp;{{page.before1}}&nbsp;</a>{%
+                                        endif %}
+                                        <a href="" type="button"
+                                            class="btn btn-dark mx-1 py-1 px-1">&nbsp;{{page.actual}}&nbsp;</a>
+                                        {% if page.after1 is not null %}<a
+                                            href="{{ path('app_index') }}?doc_page={{ page.after1 }}#d" type="button"
+                                            class="btn btn-primary mx-1 py-1 px-1">&nbsp;{{page.after1}}&nbsp;</a> {%
+                                        endif %}
+                                        {% if page.after2 is not null %}<a
+                                            href="{{ path('app_index') }}?doc_page={{ page.after2 }}#d" type="button"
+                                            class="btn btn-primary mx-1 py-1 px-1">&nbsp;{{page.after2}}&nbsp;</a>{%
+                                        endif %}
+                                        <a href="{{ path('app_index') }}?doc_page={{ page.next }}#d" type="button"
+                                            class="btn btn-primary mx-1 py-1 px-1">&nbsp;>&nbsp;</a>
+                                        <a href="{{ path('app_index') }}?doc_page={{ page.last }}#d" type="button"
+                                            class="btn btn-primary mx-1 py-1 px-1">>></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Paginacion End-->
+
+<!--Temoinage-->
+{% set imgsrc = 'assets/img/carousel-2.jpg' %}
+<div class="container-fluid bg-primary bg-testimonial py-5 mb-5 wow fadeInUp" data-wow-delay="0.1s"
+    style="margin-top: 10px; background-image:url('{{ asset(imgsrc) }}');">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="owl-carousel testimonial-carousel rounded p-5 wow zoomIn" data-wow-delay="0.6s">
+                    {% for temoinage in temoinages %}
+                    <div class="testimonial-item text-center text-white">
+                        <img class="img-fluid mx-auto h-12 w-20 rounded-circle mb-4"
+                            src="{{ asset(temoinage.patient.foto) }}" alt="">
+                        <p class="fs-5">{{ temoinage.message }}</p>
+                        <hr class="mx-auto w-25">
+                        <h4 class="text-white mb-0">{{ temoinage.patient.nom }}</h4>
+                    </div>
+                    {% else %}
+                    <div class="chat-message">
+                        <div class="message">Aucun enregistrement trouvé</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{{ path('nouveau_temoinage') }}"
+        class="btn btn-primary py-2 px-4 position-relative top-100 start-50 translate-middle">Ajouter votre
+        temoinage</a>
+</div>
+<!--Temoinage End-->
+{% endblock %}

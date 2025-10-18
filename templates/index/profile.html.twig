@@ -1,0 +1,282 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+    
+<script>
+    function activarEdicion(tipo) {
+        if (tipo == 1) {
+            document.getElementById("userdata").style.display = "none";
+            document.getElementById("mdp").style.display = "none";
+            document.getElementById("formuser_edit").style.display = "block";
+            document.getElementById("userphotolabel").style.display = "block"; 
+            document.getElementById("p_foto").style.display = "block"; 
+        } else {
+            document.getElementById("userdata").style.display = "block";
+            document.getElementById("mdp").style.display = "block";
+            document.getElementById("formuser_edit").style.display = "none";
+            document.getElementById("userphotolabel").style.display = "none";
+            document.getElementById("p_foto").style.display = "none"; 
+        }
+    } 
+
+    function cacherEdition(id,tipo){
+        var visibles =  ['date','heure','minute','boton1','boton2']; 
+        var visible = tipo ? 'block' : 'none';
+        var oculto = tipo ? 'none' :'block';
+        visibles.forEach(function(element){
+            document.getElementById(element+'_visible'+id).style.display=visible;
+            document.getElementById(element+'_oculto'+id).style.display=oculto;
+        } );
+        
+    }
+
+    function cambiarFoto(event) {
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('mifoto').src = e.target.result;
+        };
+        
+        reader.readAsDataURL(file);
+    }
+    function verificar_consulta_dentista(id) {
+        var fecha = document.getElementById('date_oculto'+id).value;
+        var heure = document.getElementById('heure_oculto'+id).value;
+        var minute = document.getElementById('minute_oculto'+id).value;
+        var parametro = fecha + " " + heure + ":" + minute + ":00";
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', "{{ path('app_verificar_consulta_dentista') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                   if(response.mensaje == '0') {
+                        document.getElementById("tr"+id).style.backgroundColor='white';
+                        document.getElementById("date_visible"+id).innerHTML=fecha;
+                        document.getElementById("heure_visible"+id).innerHTML=heure;
+                        document.getElementById("minute_visible"+id).innerHTML=minute;
+                        cacherEdition(id,true);
+                    } 
+                    else  document.getElementById("tr"+id).style.backgroundColor='pink';
+
+                } else {
+                    document.getElementById('resultado').innerHTML = '<p>Erreur!!!</p>';
+                }
+            }
+        };
+        var params = 'fecha=' + encodeURIComponent(parametro) + '&id=' + encodeURIComponent(id);
+        xhr.send(params);
+
+        return false;
+    }
+
+</script>
+
+<!--Datos del usuario -->
+    <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container">
+            {{ form_errors(formuser) }}
+            <form   action="{{ path('app_profile') }}" method="post" enctype="multipart/form-data">
+                <div class="row g-5 mb-5">
+                    <div class="col-lg-7">
+                        <div class="position-relative text-center bg-light border-bottom border-primary mt-4 py-5 p-4" >
+                            <div id="userdata">
+                                <h4>{{utilisateur.genre ? 'M.':'Mme.' }} {{utilisateur.nom}}</h4>
+                                <hr class="text-primary w-50 mx-auto mt-0">
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.age }} ans, {{ utilisateur.ville }} </div>
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.cin }}</div>
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.email }}</div>
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.telephone }}</div>
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.adresse }}</div>
+                                <a onclick="activarEdicion(1);" class="btn btn-primary py-2 px-4 position-absolute top-100 start-50 translate-middle">Modifier mon profil</a>
+                            </div>        
+                            <div id="formuser_edit" style="display: none;">
+                                <div class="d-flex  mb-1" style="margin-left: 100px;">Email : <b> {{ utilisateur.email }}</b></div>
+                                <div class="d-flex  mb-1" style="margin-left: 100px;">CIN : <b> {{ utilisateur.cin }}</b></div>
+                                <div class="d-flex  mb-1" style="margin-left: 100px;">Ville : <b> {{ utilisateur.ville }}  </b></div>
+                                <div class="d-flex  mb-1" style="margin-left: 100px;">Depuis : <b> {{ utilisateur.dde ? utilisateur.dde|date('d-m-Y')}}</b></div>
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value="Genre : " readonly disabled>
+                                    {{ form_widget(formuser.genre, {'attr': {'class': 'form-select bg-light  w-25'}}) }}
+                                </div>                              
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value="Nom : " readonly disabled>
+                                    {{ form_widget(formuser.nom, {'attr': {'class': 'form-control w-50', 'pattern':"[A-Za-zÀàÂâÄäÉéÈèÊêËëÎîÏïÔôŒœÙùÛûÜüÇç' ]{2,}( [A-Za-zÀàÂâÄäÉéÈèÊêËëÎîÏïÔôŒœÙùÛûÜüÇç' ]{2,})+"}}) }}
+                                </div>
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value="Telephone : " readonly disabled>
+                                    {{ form_widget(formuser.telephone, {'attr': {'class': 'form-control w-25', 'pattern': '[+]212(5|6|7)[0-9]{8}', 'value': utilisateur.telephone }}) }}
+                                </div>                                
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value=" Adresse: " readonly disabled>
+                                    {{ form_widget(formuser.adresse, {'attr': {'class': 'form-control w-50'}}) }}
+                                </div>
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value="Ne le : " readonly disabled>
+                                    {{ form_widget(formuser.ddn, {'attr': {'class': 'form-control w-25'}}) }}
+                                </div>                           
+                                <div style="display:none;">
+                                    {{ form_row(formuser) }}
+                                </div>
+                                <div class="btn py-2 position-absolute top-100 start-50 translate-middle">
+                                <button type="submit" class="btn btn-primary mx-2 py-2 px-4">Valider</button>
+                                <button type="reset" onclick="activarEdicion(0);" class="btn btn-dark mx-2 py-2 px-4 ">Annuler</button>
+                            </div>
+                            </div>                           
+                        </div>
+                    </div>                        
+                    <div class="col-lg-5 wow zoomIn d-flex flex-column justify-content-center align-items-center" data-wow-delay="0.3s" style="min-height: 400px;">                   
+                        <img id="mifoto" class="img-fluid rounded-circle mb-1" src="{{ asset(utilisateur.foto) }}" alt="" style="width: 350px; height: 350px; object-fit: cover;">
+                        <a id="mdp" href="{{ path('app_mdp') }}">Modifier mot de pass</a>
+                        <label for="userphoto" id="userphotolabel" style="display: none;" class="btn btn-primary py-2 px-4" style="cursor:pointer" >Modifier photo</label>
+                        <p style="display: none;" class="mt-1" id="p_foto">Taille max: 2MB</p>
+                        <input onchange="cambiarFoto(event)" type="file" name="photo" id="userphoto" accept=".jpg, .jpeg, .png" multiple="false" style="display: none;">
+                    </div> 
+                </div>
+            </form>
+        </div>
+    </div> 
+<!-- Datos de usuario fin-->
+
+<!--Citas-->
+    <div class="container-fluid py-5 wow fadeInUp mb-5" data-wow-delay="0.1s">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-5 mb-4">
+                    <div class="section-title">
+                        <h5 class="position-relative d-inline-block text-primary text-uppercase">Mes prochains rendez-vous</h5>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <b>
+                    <thead>
+                        <tr>
+                            <td>Service</td>
+                            <td  id="resultado">Dentiste</td> 
+                            <th>Clinique</th>            
+                            <td >Date</td>
+                            <td colspan="3" align="center">Heure</td>
+                            <td align="center">Actions</td>
+                        </tr>
+                    </thead>
+                </b> 
+                <tbody>
+                    {% for rendezvous in rendezvouses %}
+                        {% if rendezvous.actif %}
+                            {% set codigo = (101 - 1) * rendezvous.dentiste.id * (103 - 1) %}
+                            <form onsubmit="return verificar_consulta_dentista('{{rendezvous.id}}')" id="form_rendezvous{{rendezvous.id}}" method="post" enctype="multipart/form-data">    
+                                <tr id="tr{{rendezvous.id}}">
+                                    <td style="width: 15%;">{{rendezvous.service}}</td>    
+                                    <td style="width: 20%;"><a href="{{ path('app_docteur', {'codigo': codigo}) }}">{{ rendezvous.dentiste }}</a></td>    
+                                    <td style="width: 18%;">Denticare {{rendezvous.dentiste.ville}}</td>
+                                    <td style="width: 12%;">
+                                        <rafa id="date_visible{{rendezvous.id}}">
+                                            {{ rendezvous.date ? rendezvous.date|date('d-m-Y') }}
+                                        </rafa>
+                                        <input  id="date_oculto{{rendezvous.id}}" style="display: none;" name="date" class="form-control bg-light border-0 w-75" type="date" value="{{ rendezvous.date ? rendezvous.date|date('Y-m-d') }}">
+                                    </td>
+                                    <td style="width: 7%;" align="right">
+                                        <rafa id="heure_visible{{rendezvous.id}}">
+                                            {{ rendezvous.date ? rendezvous.date|date('H') }}
+                                        </rafa>
+                                        <input id="heure_oculto{{rendezvous.id}}" style="display: none;" class="form-control bg-light border-0  w-100" oninput="verificarHM(this)" name="heure" type="number"  pattern="\d{2}" maxlength="2" value="{{ rendezvous.date ? rendezvous.date|date('H') }}" step="1" scale="0" min="09" max="19">
+                                    </td> 
+                                    <td style="width: 1%;">
+                                        :
+                                    </td>
+                                    <td style="width: 7%;" >
+                                        <rafa id="minute_visible{{rendezvous.id}}">
+                                            {{ rendezvous.date ? rendezvous.date|date('i') }}
+                                        </rafa>
+                                        <input  id="minute_oculto{{rendezvous.id}}" style="display: none;" class="form-control bg-light border-0  w-100" oninput="verificarHM(this)" name="minute" type="number" pattern="\d{2}" maxlength="2" value="{{ rendezvous.date ? rendezvous.date|date('i') }}" step="15" scale="0" min="0" max="59">                              
+                                    </td> 
+                                    <td style="width: 10%;">
+                                        <button type="button"  id="boton1_visible{{rendezvous.id}}" class="btn btn-primary w-100" onclick="cacherEdition('{{ rendezvous.id }}',false);">Reporter</button>
+                                        <button type="submit" id="boton1_oculto{{rendezvous.id}}" class="btn btn-primary w-100 " style="display: none;" >{{ button_label|default('Valider') }}</button>
+                                    </td>                
+                                </tr>
+                            </form>  
+                    
+                        {% endif %}
+                        {% else %}
+                            <tr>
+                                <td colspan="11">Aucun enregistrement trouvé</td>
+                            </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> 
+    </div>   
+<!--Citas End-->
+
+<!-- Question -->
+    <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container">
+            {% for question in utilisateur.questions %}
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <div class="section-title">
+                        <h5 class="position-relative d-inline-block text-primary text-uppercase"></h5>
+                        <h6 class="display-9 mb-0">{{ question.date ? question.date|date('d-m H:i') }}</h6>
+                    </div>
+                    <p>{{ question.message }}</p>
+                </div>
+                <div class="col-lg-8">
+                    <div class="owl-carousel price-carousel wow zoomIn mb-1" data-wow-delay="0.9s">
+                        {% for reponse in question.reponses %}
+                            <div class="price-item">
+                                <div class="position-relative text-center bg-light py-3 px-4 mb-0 mt-0 text-wrap text-break">
+                                    <h6>Dr. {{ reponse.dentiste.nom }}</h6>
+                                    <hr class="text-primary w-50 mx-auto mb-1 mt-0">
+                                    <div class="d-flex justify-content-between"><span>{{ reponse.message }}</span></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>    
+    </div>    
+<!-- Question fin -->
+
+<!--Ajouter Question--> 
+    <div class="container-fluid py-5 mb-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-5 mb-4">
+                    <div class="section-title">
+                        <h5 class="position-relative d-inline-block text-primary text-uppercase">Ajouter question</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid banner mb-5">
+        <div class="container" style= "margin-bottom: 100px;">
+            <form method="post">
+                <div class="row gx-0 justify-content-center">
+                    <div class="bg-dark d-flex flex-column p-5" style="height: auto; width:900px;">
+                        <div class="mb-3">
+                            {{ form_widget(form.message,{'attr':{'rows' : '5'}}) }}
+                        </div>
+                        <div style="display:none;">
+                            {{ form_row(form) }}
+                        </div>
+                        <center><button class="btn btn-primary w-25">{{ button_label|default('Envoyer') }}</button></center>
+                    </div>
+                </div>  
+            </form>
+        </div>
+    </div>
+
+<!--Ajouter Question fin-->
+
+{% endblock %}

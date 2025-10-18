@@ -1,0 +1,73 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Liste {{ref}}{% endblock %}
+
+{% block body %}
+<script>
+    function activar(id) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "{{ path('app_activer') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var primary = "btn btn-primary w-100 h-100 d-flex justify-content-center align-items-center";
+                    var secondary = "btn btn-danger w-100 h-100 d-flex justify-content-center align-items-center";
+                    document.getElementById("tr"+response.id).style.backgroundColor= response.actif? 'palegreen':'pink';
+                    document.getElementById("boton"+response.id).className=response.actif ? secondary : primary;
+                    document.getElementById("boton"+response.id).innerHTML=response.actif ?  'Desactiver':'Activer';
+                } else {
+                    var errorText = "Error " + xhr.status + ": " + xhr.statusText;
+                    document.getElementById('resultado').innerHTML = '<p>' + errorText + '</p>';
+                }
+            }
+        };
+        var params = 'id=' + encodeURIComponent(id) + '&tipo=' + encodeURIComponent('utilisateur');
+        xhr.send(params);
+    }
+</script>
+
+
+<div class="container d-flex justify-content-center">
+    <div class="col-12">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Âge</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Ville</th>
+                <th>Adresse</th>
+                <th>Depuis</th>
+                <th id= "resultado">État</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for utilisateur in utilisateurs %}
+            <tr id="tr{{utilisateur.id}}" style="background-color:  {{ utilisateur.actif ? 'palegreen' : 'pink'}}">
+                <td title="{{ utilisateur.nom }}">{{ utilisateur.nom }}</td>
+                <td title="{{utilisateur.age}} ans">{{utilisateur.age}}</td>
+                <td title="{{ utilisateur.email }}"><a href="mailto={{ utilisateur.email }}">{{ utilisateur.email }}</a></td>
+                <td tel="{{ utilisateur.telephone }}" title="{{ utilisateur.telephone }}"><a href="tel={{ utilisateur.telephone }}">{{ utilisateur.telephone }}</a></td>
+                <td title="{{ utilisateur.ville }}">{{ utilisateur.ville}}</td>
+                <td title="{{ utilisateur.adresse }}">{{ utilisateur.adresse|slice(0, 20) }}</td>
+                <td title="{{ utilisateur.dde ? utilisateur.dde|date('d-m-Y')}}">{{ utilisateur.dde ? utilisateur.dde|date('d-m-Y')}}</td>
+                <td class="p-0" width="10%";>
+                    <a id="boton{{utilisateur.id}}"   onclick="activar('{{utilisateur.id}}')" class="btn btn-{{ utilisateur.actif ? 'danger' : 'primary'}} w-100 h-100 d-flex justify-content-center align-items-center">
+                        {{ utilisateur.actif ? 'Desactiver' : 'Activer' }}
+                    </a>
+                </td>                
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">Aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

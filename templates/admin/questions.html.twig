@@ -1,0 +1,60 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Liste Questions{% endblock %}
+
+{% block body %}
+<script>
+    function activar(id) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "{{ path('app_activer') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    document.getElementById("tr"+response.id).style.display="none";
+
+                } else {
+                    var errorText = "Error " + xhr.status + ": " + xhr.statusText;
+                    document.getElementById('resultado').innerHTML = '<p>' + errorText + '</p>';
+                }
+            }
+        };
+        var params = 'id=' + encodeURIComponent(id) + '&tipo=' + encodeURIComponent('question');
+        xhr.send(params);
+    }
+</script>
+
+
+<div class="container d-flex justify-content-center">
+    <div class="col-12">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>État</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for question in questions %}
+            <tr id="tr{{question.id}}" style="background-color: {{ question.actif ? 'palegreen' : 'pink'}}">
+                <td title="{{ question.patient }} le {{ question.date ? question.date|date('d-m-Y')}}">{{ question.message }}</td>
+                {% if (question.actif ) %}
+                <td class="p-0" width="100">
+                    <a onclick="activar('{{question.id}}')" class="btn btn-{{ question.actif ? 'danger' : ''}} w-100 h-100 d-flex justify-content-center align-items-center">
+                        {{ question.actif ? 'Desactiver' : '' }}
+                    </a>
+                </td>
+                {% endif %}                
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">Aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Services{% endblock %}
+
+{% block body %}
+  <!-- Hero Start -->
+  <div class="container-fluid bg-primary py-5 hero-header mb-5">
+    <div class="row py-3">
+        <div class="col-12 text-center">
+            <h1 class="display-3 text-white animated zoomIn">Nos Services</h1>
+            <a href="{{path('app_index')}}" class="h4 text-white">Accueil</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="{{path('app_services')}}" class="h4 text-white">Nos Services</a>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+
+<!-- Service Start -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+<div class="container">
+    <div class="row g-5 mb-5">
+        <div class="col-lg-5 wow zoomIn" data-wow-delay="0.3s" style="min-height: 400px;">
+            <div class="twentytwenty-container position-relative h-100 rounded overflow-hidden">
+                <img class="position-absolute w-100 h-100" src="{{asset('assets/img/services/before.jpg')}}" style="object-fit: cover;">
+                <img class="position-absolute w-100 h-100" src="{{asset('assets/img/services/after.jpg')}}" style="object-fit: cover;">
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="section-title mb-5">
+                <h5 class="position-relative d-inline-block text-primary text-uppercase">Nos services</h5>
+                <h1 class="display-5 mb-0">Nous offrons des services dentaires de la meilleure qualité</h1>
+            </div>
+           <div class="row g-5">
+                <div class="col-md-6 service-item wow zoomIn" data-wow-delay="0.6s">
+                    <a href="{{path('app_service', {'ref': 'orthodontie'})}}">
+                        <div class="rounded-top overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/services/orthodontie.jpg')}}" alt="">
+                        </div>
+                        <div class="position-relative bg-light rounded-bottom text-center p-4">
+                            <h5 class="m-0">Orthodontie</h5>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6 service-item wow zoomIn" data-wow-delay="0.9s">
+                    <a href="{{path('app_service', {'ref': 'implants_dentaires'})}}">
+                        <div class="rounded-top overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/services/implants_dentaires.jpg')}}" alt="">
+                        </div>
+                        <div class="position-relative bg-light rounded-bottom text-center p-4">
+                            <h5 class="m-0">Implants dentaires</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="col-lg-12">
+            <div class="row g-5">
+                <div class="col-md-3 service-item wow zoomIn" data-wow-delay="0.3s">
+                    <a href="{{path('app_service', {'ref': 'ponts_dentaires'})}}">
+                        <div class="rounded-top overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/services/ponts_dentaires.jpg')}}" alt="">
+                        </div>
+                        <div class="position-relative bg-light rounded-bottom text-center p-4">
+                            <h5 class="m-0">Ponts dentaires</h5>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 service-item wow zoomIn" data-wow-delay="0.6s">
+                    <a href="{{path('app_service', {'ref': 'blanchissement_dentaire'})}}">
+                        <div class="rounded-top overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/services/blanchissement_dentaire.jpg')}}" alt="">
+                        </div>
+                        <div class="position-relative bg-light rounded-bottom text-center p-4">
+                            <h5 class="m-0">Blanchissement dentaire</h5> 
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 service-item wow zoomIn" data-wow-delay="0.3s">
+                    <a href="{{path('app_service', {'ref': 'revision'})}}">
+                        <div class="rounded-top overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/services/revision.jpg')}}" alt="">
+                        </div>
+                        <div class="position-relative bg-light rounded-bottom text-center p-4">
+                            <h5 class="m-0">Révision</h5></a>
+                        </div>
+                    </a>   
+                </div>
+                <div class="col-md-3 service-item wow zoomIn" data-wow-delay="0.3s">
+                    <a href="{{path('app_service', {'ref': 'extraction_dentaire'})}}">
+                        <div class="rounded-top overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/services/extraction_dentaire.jpg')}}" alt="">
+                        </div>
+                        <div class="position-relative bg-light rounded-bottom text-center p-4">
+                            <h5 class="m-0">Extraction dentaire</h5>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+</div>
+<!-- Service End -->
+
+{% endblock %}

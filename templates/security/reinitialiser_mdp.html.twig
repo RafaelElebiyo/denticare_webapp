@@ -1,0 +1,84 @@
+{% extends 'baseAuth.html.twig' %}
+
+{% block title %}Réinitialiser Mot de Pass{% endblock %}
+
+{% block body %}
+<style>
+    /* Para Webkit (Chrome, Safari, Edge) */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<script>
+    function cambiarTipo(tipo, id) {
+        document.getElementById(id).type = tipo;
+    }
+
+    function mostrar_inputs(){
+        document.getElementById('div_code').style.display='block';
+        document.getElementById('div_pass').style.display='block';
+        document.getElementById('email').setAttribute("readonly", true);
+        document.getElementById('btn').type='submit';
+    }
+    function validar_mail(){    
+        var email = document.getElementById('email').value;
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', "{{ path('compare_email') }}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText)
+                    if(response.mensaje == '1') {
+                        mostrar_inputs();
+                        document.getElementById('resultado').innerHTML = '';
+                    }
+                    else document.getElementById('resultado').innerHTML = 'Email invalide';
+                } else {
+                    document.getElementById('resultado').innerHTML = '<p>Erreur!!!</p>';
+                }
+            }
+        };
+        var params = 'email=' + encodeURIComponent(email);
+        xhr.send(params);
+
+    }
+</script>
+
+<div class="container-fluid banner mb-5">
+    <div class="container" style="margin-top: 120px; margin-bottom: 100px;">
+        <form id = "formrmdp"  method="post" >
+            <div class="row gx-0 justify-content-center">
+                <div class="bg-dark d-flex flex-column p-5" style="height: auto; width:500px;">
+                    <h3 class="text-white mb-3">Réinitialiser Mot de Pass</h3>
+                    <h6 class="text-white mb-3"><a href="{{ path('app_profile') }}"
+                        style="margin-bottom: 10px;">Retourner a l'authentification</a></h6>
+                    <div class="mb-3">
+                        <label for="password1">Entrer votre email</label>
+                        <input type="email" name="email" id="email" class="form-control">
+                        <p id="resultado" class="text-danger mb-0">&nbsp;</p>    
+                    </div>
+                    <div id="div_pass" style="display: none;" class="mb-3">
+                        <label for="password">Nouveau mot de pass</label>
+                        <input  type="text" name="password" id="password" class="form-control" pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,12}" required>    
+                    </div>
+                    <div id="div_code" style="display: none;" class="mb-3">
+                        <label  for="code">Code de verification</label>
+                        <input type="number" name="code" maxlength="6" max="999999" id="code" class="form-control" autocomplete="current-password" required>    
+                    </div>
+                    
+                    <button class="btn btn-lg btn-primary" id="btn" onclick="validar_mail()" type="button">
+                        Valider
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+  
+{% endblock %}

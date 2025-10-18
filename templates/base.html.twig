@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+      <!-- <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> --> 
+    {% block stylesheets %}
+        <meta charset="utf-8">
+    <title>Denticare-accueil</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('assets/img/dentista.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('assets/img/dentista.png') }}" type="image/png">
+
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"> 
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{asset('assets/lib/owlcarousel/assets/owl.carousel.min.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/lib/animate/animate.min.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css')}}" rel="stylesheet" />
+    <link href="{{asset('assets/lib/twentytwenty/twentytwenty.css')}}" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{asset('assets/css/bootstrap.min.css')}}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+       <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary m-1" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-grow text-dark m-1" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-grow text-secondary m-1" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm px-5 py-0 py-lg-0">
+        <a href="{{path('app_index')}}" class="navbar-brand p-0">
+            <h1 class="m-0 text-primary"><img src="{{asset('assets/img/dentista.jpg')}}" alt="Dentista" class="me-2" style="width: 3em; height: 3em;">Denticare</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0">
+                <a href="{{path('app_index')}}" class="nav-item nav-link">Accueil</a>
+                <a href="{{path('app_apropos')}}" class="nav-item nav-link">À propos</a>
+                <a href="{{path('app_services')}}" class="nav-item nav-link">Nos Services</a>
+                <a href="{{path('app_cliniques')}}" class="nav-item nav-link">Nos cliniques</a>
+            </div>
+           {% if not app.user %}
+                <a href="{{path('app_login')}}" class="btn btn-secondary">S'authentifier</a>
+                <a href="{{path('nouveau_rendezvous')}}" class="btn btn-primary py-2 px-4 ms-3">Rendez-vous</a>
+            </div> 
+            {% else %}
+                <a href="{{path('nouveau_rendezvous')}}" class="btn btn-primary py-2 px-4 ms-3">Rendez-vous</a>
+                <a href="{{ path('app_logout') }}" class="btn btn-secundary py-2 px-4">Logout</a>
+                <a href="{{ path('app_profile') }}"><img class="img-fluid rounded-circle mb-1" src="{{ asset(app.user.foto) }}" alt="" style="width: 50px; height: 50px; object-fit: cover;"></a>
+            </div>
+            {% endif %}
+    </nav>
+    <!-- Navbar End -->
+
+        {% block body %}{% endblock %}
+    </body>
+    <!-- Newsletter Start -->
+    {% if app.user %}
+    {% else %}
+        <div class="container-fluid position-relative pt-5 wow fadeInUp" data-wow-delay="0.1s" style="z-index: 1;">
+            <div class="container">
+                <div class="bg-primary p-5">
+                    <div class="mx-auto" style="max-width: 600px;">
+                        <div class="input-group d-flex justify-content-center align-items-center">
+                            <a href="{{path('app_register')}}" class="btn btn-dark" style="padding: 10px;">S'inscrire</a>
+                            <a href="{{path('app_login')}}" class="btn btn-light" style="padding: 10px; margin-left: 10px;">S'authentifier</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <!-- Newsletter End -->
+   
+
+
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light py-5 wow fadeInUp" data-wow-delay="0.3s" style="margin-top: 10px;">
+        <div class="container pt-5">
+            <div class="row g-5 pt-4">
+                <div class="col-lg-3 col-md-6">
+                    <h3 class="text-white mb-4">Liens rapides</h3>
+                    <div class="d-flex flex-column justify-content-start">
+                        <a class="text-light mb-2" href="{{path('app_index')}}"><i class="bi bi-arrow-right text-primary me-2"></i>Accueil</a>
+                        <a class="text-light mb-2" href="{{path('app_apropos')}}"><i class="bi bi-arrow-right text-primary me-2"></i>À propos de nous</a>
+                        <a class="text-light mb-2" href="{{path('app_services')}}"><i class="bi bi-arrow-right text-primary me-2"></i>Nos services</a>
+                        <a class="text-light mb-2" href="{{path('nouveau_rendezvous')}}"><i class="bi bi-arrow-right text-primary me-2"></i>Rendez-vous</a>
+                    </div>
+                </div>
+             
+                <div class="col-lg-3 col-md-6">
+                    <h3 class="text-white mb-4">Nous contacter</h3>
+                    <p class="mb-2"><i class="bi bi-geo-alt text-primary me-2"></i><a href="geo:fst-tetouan, Morroco">fst-tetouan, Morroco</a></p>
+                    <p class="mb-2"><i class="bi bi-envelope-open text-primary me-2"></i><a href="mailto:Denticare@example.com">Denticare@gmail.com</a></p>
+                    <p class="mb-0"><i class="bi bi-telephone text-primary me-2"></i><a href="tel:+21269175234">+21269175234</a></p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h3 class="text-white mb-4">Suivez-nous</h3>
+                    <div class="d-flex">
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded me-2" href="https://x.com/?lang=es"><i class="fab fa-twitter fw-normal"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded me-2" href="https://web.facebook.com/rafael.elebiyomedina.7/"><i class="fab fa-facebook-f fw-normal"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded me-2" href="https://www.linkedin.com/feed/?trk=guest_homepage-basic_google-one-tap-submit"><i class="fab fa-linkedin-in fw-normal"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded" href="https://www.instagram.com/lbo_el_l/"><i class="fab fa-instagram fw-normal"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-5 pt-4">
+                <small class="py-2"><i class="far fa-clock text-primary me-2"></i>Horaires d'ouverture : Lundi au samedi : 9h00 à 22h00, Dimanche fermé</small>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid text-light py-4" style="background: #051225;">
+        <div class="container">
+            <div class="row g-0">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-md-0">&copy; <a class="text-white border-bottom" href="#">Denticare</a>. All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">Designed by <a class="text-white border-bottom" href="https://htmlcodex.com">HTML Codex</a><br>
+                        Distributed by <a class="text-white border-bottom" href="https://themewagon.com">ThemeWagon</a>              
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{asset('assets/lib/wow/wow.min.js')}}"></script>
+    <script src="{{asset('assets/lib/easing/easing.min.js')}}"></script>
+    <script src="{{asset('assets/lib/waypoints/waypoints.min.js')}}"></script>
+    <script src="{{asset('assets/lib/owlcarousel/owl.carousel.min.js')}}"></script>
+    <script src="{{asset('assets/lib/tempusdominus/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/lib/tempusdominus/js/moment-timezone.min.js')}}"></script>
+    <script src="{{asset('assets/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js')}}"></script>
+    <script src=" {{asset('assets/lib/twentytwenty/jquery.event.move.js')}}"></script>
+    <script src="{{asset('assets/lib/twentytwenty/jquery.twentytwenty.js')}}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{{asset('assets/js/main.js')}}"></script>
+</html>

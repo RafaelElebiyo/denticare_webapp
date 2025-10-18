@@ -1,0 +1,63 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+index: 
+    path: /
+    controller: App\Controller\IndexController::index
+app_nouveau_temoinage: 
+    path: /nouveau_temoinage
+    controller: App\Controller\IndexController::nouveau_temoinage
+prochains_rendez_vous:
+    path: /prochains_rendez_vous
+    controller: App\Controller\IndexController::prochains_rendez_vous
+nouveau_rendezvous:
+    path: /nouveau_rendezvous
+    controller: App\Controller\IndexController::nouveau_rendezvous
+aporpos: 
+    path: /apropos
+    controller: App\Controller\IndexController::apropos
+services: 
+    path: /services
+    controller: App\Controller\IndexController::services 
+app_service: 
+    path: /service/{ref}
+    controller: App\Controller\IndexController::service    
+app_dentiste:
+    path: /dentiste
+    controller: App\Controller\IndexController::dentiste
+app_profile:
+    path: /profile
+    controller: App\Controller\IndexController::profile
+app_docteur:
+    path: /docteur/{codigo}
+    controller: App\Controller\IndexController::docteur
+app_patient:
+    path: /patient/{codigo}
+    controller: App\Controller\IndexController::patient
+after_login:
+    path: /after_login
+    controller: App\Controller\IndexController::after_login
+app_verificar_consulta:
+    path: /verificar_consulta
+    controller: App\Controller\IndexController::consulta
+reportar:
+    path: /reportar
+    controller: App\Controller\IndexController::reportar
+app_cliniques: 
+    path: /cliniques
+    controller: App\Controller\IndexController::cliniques
+app_clinique: 
+    path: /clinique/{ref}
+    controller: App\Controller\IndexController::clinique
+app_cargar_dentistas: 
+    path: /cargar_dentistas
+    controller: App\Controller\IndexController::cargar_dentistas
+app_mdp: 
+    path: /changer_mot_de_pass
+    controller: App\Controller\SecurityController::mdp
+app_reinitialiser_mot_de_pass: 
+    path: /reinitialiser_mot_de_pass
+    controller: App\Controller\SecurityController::reinitialiser_mot_de_pass
+    

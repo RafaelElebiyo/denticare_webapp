@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dentiste{% endblock %}
+
+{% block body %}
+ <!-- Hero Start -->
+ <div class="container-fluid bg-primary py-5 hero-header mb-5">
+    <div class="row py-3">
+        <div class="col-12 text-center">
+            <h1 class="display-3 text-white animated zoomIn">Dentiste</h1>
+            <a href="{{path('app_index')}}" class="h4 text-white">Accueil</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a href="{{path('app_apropos')}}" class="h4 text-white">Dentiste</a>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+<!--Datos del usuario -->
+<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row g-5 mb-5">
+            <div class="col-lg-7">
+                <div class="position-relative text-center bg-light border-bottom border-primary py-5 p-4" >
+                    <div id="userdata">
+                        <h4>Dr. {{utilisateur.nom}}</h4>
+                        <hr class="text-primary w-50 mx-auto mt-0">
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">Denticare {{ utilisateur.ville }}</div>
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.age }} ans</div>
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.email }}</div>
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.telephone }}</div>
+                        <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.adresse }}</div>
+                    </div>                                   
+                </div>
+            </div>                        
+            <div class="col-lg-5 wow zoomIn d-flex flex-column justify-content-center align-items-center" data-wow-delay="0.3s" style="min-height: 400px;">
+                <img id="mifoto" class="img-fluid rounded-circle mb-1" src="{{ asset(utilisateur.foto) }}" alt="" style="width: 350px; height: 350px; object-fit: cover;">
+            </div> 
+        </div>
+    </div>
+</div> 
+<!-- Datos de usuario fin-->
+
+<!-- Team Start -->
+{% if dentistes %}
+<div class="container-fluid py-0">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-5 mb-4">
+                <div class="section-title">
+                    <h5 class="position-relative d-inline-block text-primary text-uppercase">Autres specialistes du Denticare {{utilisateur.ville}}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+<div class="container-fluid py-0">
+    <div class="container">
+        <div class="row g-5">
+            {% set t = [3, 6,9,1] %}
+            {% set c = 0 %}
+            
+            {% for dentiste in dentistes %}
+                {% if dentiste.id != utilisateur.id %}
+                    {% set age = date().diff(dentiste.ddn).y %}
+                    <div class="col-lg-3 wow slideInUp" data-wow-delay="0.{{ t[c%4] }}s">
+                        <div class="team-item">
+                            <div class="position-relative rounded-top" style="z-index: 1;">
+                                {% set codigo = (101 - 1) * dentiste.id * (103 - 1) %}
+                                <a href="{{ path('app_docteur',{'codigo': codigo}) }}"><img class="img-fluid rounded-top w-100" src="{{ asset( dentiste.foto ) }}" alt=""></a> 
+                                <div class="position-absolute top-100 start-50 translate-middle bg-light rounded p-2 d-flex">
+                                    <a class="btn btn-secundary btn-square m-1" title="{{ dentiste.email }}" href="mailto:{{ dentiste.email }}"><i class="fa fa-envelope-open text-primary fw-normal"></i></a>
+                                    <a class="btn btn-secundary btn-square m-1"title="{{ dentiste.telephone }}" href="tel:{{ dentiste.telephone }}"><i class="bi bi-telephone text-primary me-2"></i></a>
+                                    <a class="btn btn-secundary btn-square m-1" title="{{ dentiste.adresse }}" href="geo:{{ dentiste.adresse }}"><i class="bi bi-geo-alt text-primary me-2"></i></a>
+                                </div>
+                            </div>
+                            <div class="team-text position-relative bg-light text-center rounded-bottom p-4 pt-5">
+                                
+                                <a href="{{ path('app_docteur', {'codigo': codigo}) }}"><h4 class="mb-2">Dr. {{ dentiste.nom }}</h4></a>
+                            </div>
+                        </div>
+                    </div>
+                    {% set c = c + 1 %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+<!-- Team End -->
+
+{% endblock %}

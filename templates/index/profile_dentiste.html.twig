@@ -1,0 +1,196 @@
+{% extends 'baseDentiste.html.twig' %}
+
+{% block title %}Profil du dentiste{% endblock %}
+
+{% block body %}
+    
+    <script>
+        function activarEdicion(tipo) {
+            if (tipo == 1) {
+                document.getElementById("userdata").style.display = "none";
+                document.getElementById("formuser_edit").style.display = "block";
+                document.getElementById("userphotolabel").style.display = "block";
+                document.getElementById("mdp").style.display = "none";
+            } else {
+                document.getElementById("userdata").style.display = "block";
+                document.getElementById("mdp").style.display = "block";
+                document.getElementById("formuser_edit").style.display = "none";
+                document.getElementById("userphotolabel").style.display = "none";
+
+            }
+        } 
+
+        function responder(id, indice, nom) {
+            document.getElementById('question_id').value = id;
+            document.getElementById('rep').innerHTML = 'Répondez à la question ' +indice+', par '+nom;
+        }
+
+        function cambiarFoto(event) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                document.getElementById('mifoto').src = e.target.result;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    </script>
+
+<!--Datos del usuario -->
+    <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container">
+            {{ form_errors(formuser) }}
+            <form   action="{{ path('app_dentiste') }}" method="post" enctype="multipart/form-data">
+                <div class="row g-5 mb-5">
+                    <div class="col-lg-7">
+                        <div class="position-relative text-center bg-light border-bottom border-primary py-5 p-4" >
+                            <div id="userdata">
+                                <h4>Dr. {{utilisateur.nom}}</h4>
+                                <hr class="text-primary w-50 mx-auto mt-0">
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.age }} ans, {{ utilisateur.ville }} </div>
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.cin }}</div>
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.email }}</div>
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.telephone }}</div>
+                                <div class="d-flex justify-content-between mb-3" style="margin-left: 100px;">{{ utilisateur.adresse }}</div>
+                                <a onclick="activarEdicion(1);" class="btn btn-primary py-2 px-4 position-absolute top-100 start-50 translate-middle">Modifier mon profil</a>
+                            </div>        
+                            <div id="formuser_edit" style="display: none;">
+                                <div class="d-flex  mb-1" style="margin-left: 100px;">Email : <b> {{ utilisateur.email }}</b></div>
+                                <div class="d-flex  mb-1" style="margin-left: 100px;">CIN : <b> {{ utilisateur.cin }}</b></div>
+                                <div class="d-flex  mb-1" style="margin-left: 100px;">Ville : <b> {{ utilisateur.ville }}  </b></div>
+                                <div class="d-flex  mb-1" style="margin-left: 100px;">Depuis : <b> {{ utilisateur.dde ? utilisateur.dde|date('d-m-Y')}}</b></div>
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value="Genre : " readonly disabled>
+                                    {{ form_widget(formuser.genre, {'attr': {'class': 'form-select bg-light  w-25'}}) }}
+                                </div>                              
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value="Nom : " readonly disabled>
+                                    {{ form_widget(formuser.nom, {'attr': {'class': 'form-control w-50', 'pattern':"[A-Za-zÀàÂâÄäÉéÈèÊêËëÎîÏïÔôŒœÙùÛûÜüÇç' ]{2,}( [A-Za-zÀàÂâÄäÉéÈèÊêËëÎîÏïÔôŒœÙùÛûÜüÇç' ]{2,})+"}}) }}
+                                </div>
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value="Telephone : " readonly disabled>
+                                    {{ form_widget(formuser.telephone, {'attr': {'class': 'form-control w-25', 'pattern': '[+]212(5|6|7)[0-9]{8}', 'value': utilisateur.telephone }}) }}
+                                </div>                                
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value=" Adresse: " readonly disabled>
+                                    {{ form_widget(formuser.adresse, {'attr': {'class': 'form-control w-50'}}) }}
+                                </div>
+                                <div class="d-flex  mb-3 px-0" style="margin-left: 100px;">
+                                    <input class="form-control bg-light w-25 border-0" value="Ne le : " readonly disabled>
+                                    {{ form_widget(formuser.ddn, {'attr': {'class': 'form-control w-25'}}) }}
+                                </div>                           
+                                <div style="display:none;">
+                                    {{ form_row(formuser) }}
+                                </div>
+                                <div class="btn py-2 position-absolute top-100 start-50 translate-middle">
+                                <button type="submit" class="btn btn-primary mx-2 py-2 px-4">Valider</button>
+                                <button type="reset" onclick="activarEdicion(0);" class="btn btn-dark mx-2 py-2 px-4 ">Annuler</button>
+                                </div>
+                            </div>                           
+                        </div>
+                    </div>                        
+                    <div class="col-lg-5 wow zoomIn d-flex flex-column justify-content-center align-items-center" data-wow-delay="0.3s" style="min-height: 400px;">
+                        <img id="mifoto" class="img-fluid rounded-circle mb-1" src="{{ asset(utilisateur.foto) }}" alt="" style="width: 350px; height: 350px; object-fit: cover;">
+                        <a id="mdp" href="{{ path('app_mdp') }}">Modifier mot de pass</a>
+                        <label for="userphoto" id="userphotolabel" style="display: none;" class="btn btn-primary py-2 px-4" style="cursor:pointer" >Modifier photo</label>
+                        <input onchange="cambiarFoto(event)" type="file" name="photo" id="userphoto" accept=".jpg, .jpeg, .png" multiple="false" style="display: none;">
+                    </div> 
+                </div>
+            </form>
+        </div>
+    </div> 
+<!-- Datos de usuario fin-->
+
+<!-- Question -->
+{% if questions is not empty %}
+<div class="container-fluid py-5 mb-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-5 mb-4">
+                <div class="section-title">
+                    <h5 class="position-relative d-inline-block text-primary text-uppercase">Dernières Questions</h5>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="container">
+                {% for question in questions %}
+                <div class="row g-5">
+                    <div class="col-lg-8">
+                        <div class="section-title">
+                            <h5 class="position-relative d-inline-block text-primary text-uppercase"></h5>
+                            <h6 class="display-9 mb-0"> Question {{loop.index}} du {{ question.date ? question.date|date('d-m H:i') }}, par {{question.patient.nom}}</h6>
+                        </div>
+                        <p>{{ question.message }}</p>
+                    </div>
+                    <div class="col-lg-4 mb-4"> 
+                        <a type="button" href="{{ path('app_dentiste') }}#repondre" class="btn btn-primary" onclick="responder('{{ question.id }}', '{{ loop.index }}', '{{question.patient.nom}}')">Repondre</a>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>     
+        <div class="container-fluid banner mb-5" >
+            <div class="container" id="repondre" style= " padding-bottom: 200px;">
+            </div>            
+            <div class="container" style= " margin-bottom: 5px;">
+                {{ form_errors(form) }}
+                <form method="post" >
+                    <div class="row gx-0 justify-content-center">
+                        <div class="bg-dark d-flex flex-column p-5" style="height: auto; width:900px;">
+                            <h3 class="text-white mb-2" id = 'rep'>Réponse:</h3>
+                            <div class="mb-3">
+                                {{ form_widget(form.message,{'attr':{'rows' : '5'}}) }} 
+                            </div>
+                            <input type="hidden" name="question_id" id="question_id" value="">
+                            <div style="display:none;">
+                                {{ form_row(form) }}
+                            </div>
+                            <center><button class="btn btn-primary w-25">{{ button_label|default('Envoyer') }}</button></center>
+                        </div>
+                    </div>  
+                </form>
+            </div>
+        </div>       
+    </div> 
+</div>
+{% endif %}
+<!-- Question fin -->
+
+<!-- Reponses -->
+{% if utilisateur.reponses is not empty %}
+<div class="container-fluid py-5 wow fadeInUp mb-20" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-5 mb-4">
+                <div class="section-title">
+                    <h5 class="position-relative d-inline-block text-primary text-uppercase">Réponses</h5>
+                </div>
+            </div>
+        </div>        
+        {% for reponse in utilisateur.reponses %}
+        <div class="row g-5">
+            <div class="col-lg-5 mb-4">
+                <div class="section-title">
+                    <h6 class="display-9 mb-0">{{ reponse.date ? reponse.date|date('H:i d-m') }}</h6>
+                </div>
+                <p>{{ reponse.message }}</p>
+            </div>
+            <div class="col-lg-5 mb-4"> 
+                <div class="price-item">
+                    <div class="position-relative text-center bg-light py-3 px-4 mb-0 mt-0 text-wrap text-break">
+                        <h6>{{reponse.question.patient.genre ? 'M.':'Mme.'}} {{ reponse.question.patient.nom }}</h6>
+                        <hr class="text-primary w-50 mx-auto mb-1 mt-0">
+                        <div class="d-flex justify-content-between"><span>{{ reponse.question.message }}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div> 
+</div>
+{% endif %}   
+<!-- Reponses fin -->
+{% endblock %}

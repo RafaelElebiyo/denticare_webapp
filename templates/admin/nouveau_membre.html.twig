@@ -1,0 +1,103 @@
+{% extends 'baseAdmin.html.twig' %}
+
+{% block title %}Ajouter un membre{% endblock %}
+
+{% block body %}
+    <script>
+        function verificar_email_y_cin() {
+            var email = document.getElementById('utilisateur_email').value;
+            var cin = document.getElementById('utilisateur_cin').value;
+    
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', "{{ path('app_verificar') }}", true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        var result = response.mensaje == '1' ? 'Il y a déjà un utilisateur avec cet email':'&nbsp;' ;
+                        result = response.mensaje == '2' ? '&nbsp;': result ;
+                        var result2 = response.mensaje == '1'? '&nbsp;' : '&nbsp;';
+                        result2 = response.mensaje == '2' ? 'Il y a déjà un utilisateur avec cet CIN': result2 ;
+                        document.getElementById('resultado').innerHTML = result;
+                        document.getElementById('resultado_cin').innerHTML = result2;
+                        
+                        // Si no hay errores, permitir el envío del formulario
+                        if (response.mensaje != '1' && response.mensaje != '2') {
+                            document.getElementById('nouveau_membre').submit();
+                        }
+                    }
+                }
+            };
+    
+            var params = 'email=' + encodeURIComponent(email) + '&cin=' + encodeURIComponent(cin);
+            xhr.send(params);
+    
+            return false;
+        }
+    </script>
+
+
+    {{ form_errors(form) }}
+
+    <!-- Banner Start -->
+    <div class="container-fluid banner mb-3">
+        <div class="container" style="margin-top: 100px; margin-bottom: 3px;">
+            <form id="nouveau_membre" action="{{ path('app_nouveau_membre') }}" method="post" enctype="multipart/form-data"  onsubmit="return verificar_email_y_cin();">
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-8 wow zoomIn" data-wow-delay="0.3s">
+                        <div class="bg-dark d-flex flex-column p-5" style="height: auto;">
+                            <div class="row g-3 bg-dark">
+                                <h3 class="text-white mb-0">Ajouter membre</h3>
+                                <p id="resultado_cin" class="text-danger mb-0 mt-0">&nbsp;</p>
+                                <p id="resultado" class="text-danger mb-0 mt-0">&nbsp;</p>
+
+                                <div class="col-10 col-sm-8 mb-2 mt-0">
+                                    {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'pattern':"[A-Za-zÀàÂâÄäÉéÈèÊêËëÎîÏïÔôŒœÙùÛûÜüÇç' ]{2,}( [A-Za-zÀàÂâÄäÉéÈèÊêËëÎîÏïÔôŒœÙùÛûÜüÇç' ]{2,})+"}}) }}
+                                </div>
+                                <div class="col-10 col-sm-4 mb-2 mt-0">
+                                    {{ form_widget(form.genre, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-10 col-sm-8 mb-2 ">
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-10 col-sm-4 mb-2 ">
+                                    {{ form_widget(form.ddn, {'attr': {'class': 'form-control'}}) }}
+                                </div>              
+                                <div class="col-10 col-sm-8 mb-2">
+                                    {{ form_widget(form.adresse, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-10 col-sm-4 mb-2">
+                                    {{ form_widget(form.ville, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-10 col-sm-8 mb-2 ">
+                                    {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-10 col-sm-4 mb-2 ">
+                                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'pattern': '[+]212(5|6|7)[0-9]{8}', 'value': '+212'}}) }}
+                                </div>
+                                <div class="col-10 col-sm-8 mb-2 mt-0 "></div>
+                                <div class="col-10 col-sm-4 mb-2">
+                                    <select name="roles" class="form-control">
+                                        <option selected value="dentiste">Dentiste</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="deux">Les deux</option>
+                                    </select>
+                                </div>
+        
+                                <div style="display:none;">
+                                    {{ form_row(form) }}
+                                </div>
+                                <center><div class="col-10">
+                                    <button type="submit" class="btn btn-lg btn-primary">Enregistrer</button>
+                                </div> </center>           
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Banner Start -->
+{% endblock %}
