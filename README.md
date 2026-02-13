@@ -35,29 +35,31 @@ DATABASE_URL="mysql://root:@127.0.0.1:3306/pfe?serverVersion=10.4.28-MariaDB&cha
 # Messenger configuration
 MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
 Note: Do not define production secrets in committed .env files. Refer to Symfony Secrets Documentation for secure handling.
-
+```
 Installation
 Clone the repository:
+`git clone https://github.com/RafaelElebiyo/denticare_webapp`
 
-git clone https://github.com/RafaelElebiyo/denticare_webapp
 Navigate to the project folder:
+`cd denticare_webapp`
 
-cd denticare_webapp
 Install dependencies using Composer:
+`composer install`
 
-composer install
 Configure your .env.local with database credentials and other overrides.
 
 Create and migrate the database:
-
+`
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
+`
 Start the Symfony server:
-
+`
 symfony server:start
+`
 Access the app at http://localhost:8000.
 
-Features
+## Features
 Appointment Management: Schedule appointments without conflicts.
 
 Patient Management: Avoid double bookings for the same patient.
